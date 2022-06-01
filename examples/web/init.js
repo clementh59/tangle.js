@@ -13,5 +13,16 @@ window.onload = async () => {
   document.querySelector("#test-anchors-example").addEventListener("click", async () => main_anchors());
   document.querySelector("#test-ld-signatures-example").addEventListener("click", async () => main_signatures());
   document.querySelector("#test-iota-proofs-example").addEventListener("click", async () => main_ld_proofs());
-  document.querySelector("#test-epcis").addEventListener("click", async () => anchorEPCISDocument(epcisDocument));
+  document.querySelector("#test-epcis").addEventListener("click", async () => {
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+    main_ld_proofs();
+  } );
 };

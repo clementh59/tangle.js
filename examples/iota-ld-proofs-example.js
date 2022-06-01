@@ -2,7 +2,7 @@ import { IotaSigner, IotaLdProofGenerator, IotaLdProofVerifier, SignatureTypes }
 import { IotaAnchoringChannel } from "@tangle-js/anchors";
 
 /**
- 
+
    DID used
 
 {
@@ -18,15 +18,6 @@ import { IotaAnchoringChannel } from "@tangle-js/anchors";
 
 // Example on how to create LD Proofs anchored to the Tangle
 export default async function main() {
-    const myDID = "did:iota:HeNzaWXCT6jTsshy9gyXCz9242NgZtMrbW1EC66iXZNP";
-
-    console.log("Creating a signer with DID", myDID);
-    const signer = await IotaSigner.create(myDID);
-
-    console.log("Creating and binding an anchoring channel ...");
-    const anchoringChannel = await IotaAnchoringChannel.bindNew();
-    console.log(anchoringChannel.channelID);
-
     const document = {
         "@context": "https://schema.org",
         "id": "http://example.org/car-tracker/bd91402c-d9b9-11eb-b8bc-0242ac130003",
@@ -39,26 +30,24 @@ export default async function main() {
         "dateUpdated": new Date().toISOString()
     };
 
-    console.log("Anchoring to the Tangle ...");
-    console.log(document);
+    const ldProof = {
+        "type": "IotaLinkedDataProof2021",
+        "verificationMethod": "did:iota:HeNzaWXCT6jTsshy9gyXCz9242NgZtMrbW1EC66iXZNP",
+        "proofPurpose": "dataVerification",
+        "proofValue": {
+            "channelID": "e0e5eace86812334d11d28faecda6f38f037dd4c2dd318a04313d049c387b1510000000000000000:dace9268a21d6619806d986e",
+            "anchorageID": "dace9268a21d6619806d986e",
+            "msgID": "61ab8fb28d34f0b3cc96fb30",
+            "msgIDL1": "7848f224ffd901fcfaf97ebbb549bc4e9662ca1521418885f4d6f140a22a8b77"
+        },
+        "created": "2022-05-31T16:13:44.354Z"
+    }
 
-    const ldProofGenerator = IotaLdProofGenerator.create(anchoringChannel,signer);
-
-    const ldProof = await ldProofGenerator.generate(document, {
-      signatureType: SignatureTypes.ED25519_2018,
-      verificationMethod: "key",
-      secret: "8XghdzhFGWrferW8v1PwpV86gtHKALKzxhGKSi4vGs3R",
-      anchorageID: anchoringChannel.firstAnchorageID
-    });
-    console.log("Linked Data Proof: ");
-    console.log(ldProof);
-
-    console.log("Verifying ...");
     const anchoredDoc = {
       ...document,
       proof: ldProof
     };
     const result = await IotaLdProofVerifier.verifyJson(anchoredDoc);
-    
-    console.log("Verified: ", result); 
+
+    console.log("Verified: ", result);
 }
