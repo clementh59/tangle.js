@@ -24,6 +24,7 @@
   "homepage": "https://github.com/iotaledger/tangle.js#readme",
   "dependencies": {
     "@tangle-js/anchors": "0.9.3",
+
     "@tangle-js/ld-proofs": "0.9.6-1",
     "buffer": "^6.0.3",
     "copy-webpack-plugin": "^11.0.0",
