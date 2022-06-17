@@ -2,7 +2,7 @@ import { IotaSigner, IotaLdProofGenerator, IotaLdProofVerifier, SignatureTypes }
 import { IotaAnchoringChannel } from "@tangle-js/anchors";
 
 /**
- 
+
    DID used
 
 {
@@ -24,16 +24,8 @@ import { IotaAnchoringChannel } from "@tangle-js/anchors";
 
 // Example on how to create LD Proofs anchored to the Tangle
 export default async function main() {
-    const myDID = "did:iota:4sQE2rDL578awq4mzhVU47cLSax2pGDdtHvCP8fXBRgf";
-
-    console.log("Creating a signer with DID", myDID);
-    const signer = await IotaSigner.create(myDID);
-
-    console.log("Creating and binding an anchoring channel ...");
-    const anchoringChannel = await IotaAnchoringChannel.bindNew();
-    console.log(anchoringChannel.channelID);
-
-    const document = {
+    console.log('calling verify');
+    const doc = {
         "@context": "https://schema.org",
         "id": "http://example.org/car-tracker/bd91402c-d9b9-11eb-b8bc-0242ac130003",
         "type": "Vehicle",
@@ -42,29 +34,25 @@ export default async function main() {
             "value": 50.2,
             "unitCode": "KMH"
         },
-        "dateUpdated": new Date().toISOString()
+        "dateUpdated": '2022-06-16T13:21:36.820Z'
+    };
+    const proof = {
+        type: 'IotaLinkedDataProof2021',
+        verificationMethod: 'did:iota:4sQE2rDL578awq4mzhVU47cLSax2pGDdtHvCP8fXBRgf',
+        proofPurpose: 'dataVerification',
+        proofValue: {
+            channelID: 'f678d1dea9f340d787f589814329c346b2bfe2297c924b46c2ba7832aa6f8d3c0000000000000000:568435cd2daecc47bb1115a4',
+            anchorageID: '568435cd2daecc47bb1115a4',
+            msgID: 'c75d28e0c08f161bad515920',
+            msgIDL1: '820f81c83916ffc3ec032fffa5495cebefbfc1a357b417830e7e9a2376bc0fda'
+        },
+        created: '2022-06-16T13:21:45.413Z'
     };
 
-    console.log("Anchoring to the Tangle ...");
-    console.log(document);
-
-    const ldProofGenerator = IotaLdProofGenerator.create(anchoringChannel,signer);
-
-    const ldProof = await ldProofGenerator.generate(document, {
-      signatureType: SignatureTypes.ED25519_2018,
-      verificationMethod: "dv-0",
-      secret: "EnGTu7jYTapWn84Z9iiVjnzJaF3fc1x5JptPb3bcVhx1",
-      anchorageID: anchoringChannel.firstAnchorageID
-    });
-    console.log("Linked Data Proof: ");
-    console.log(ldProof);
-
-    console.log("Verifying ...");
     const anchoredDoc = {
-      ...document,
-      proof: ldProof
+        ...doc,
+        proof,
     };
     const result = await IotaLdProofVerifier.verifyJson(anchoredDoc);
-    
-    console.log("Verified: ", result); 
+    console.log(result);
 }
